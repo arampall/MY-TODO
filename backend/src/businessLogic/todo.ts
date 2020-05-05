@@ -3,7 +3,7 @@ import { TodoItem } from '../models/TodoItem';
 import { CreateTodoRequest } from '../requests/CreateTodoRequest';
 import * as uuid from 'uuid';
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
-import {getPreformedURL, getUploadUrl} from '../s3/uploadImage';
+import {getPreformedURL, getUploadUrl, removeImageFromS3} from '../s3/imageHandler';
 
 const todoDB = new TodoDB();
 
@@ -30,6 +30,7 @@ export async function updateTodo(
 
 export async function deleteTodo(todoId: string, userId: string){
     await todoDB.deleteTodo(todoId, userId);
+    await removeImageFromS3(todoId);
 }
 
 export async function updateImage(todoId:string, userId: string): Promise<string>{
