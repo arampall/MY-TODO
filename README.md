@@ -3,11 +3,11 @@
   https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev
 
 # REST Endpoints:
-  GET - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos
-  POST - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos
-  PATCH - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId}
-  DELETE - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId}
-  POST - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId}/attachment
+  [GET TODO](#gettodos) - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos   
+  [CREATE TODO](#createtodo) - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos   
+  [UPDATE TODO](#updatetodo) - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId}   
+  [DELETE TODO](#deletetodo) - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId}   
+  [GENERATE UPLOAD URL](#generateuploadurl) - https://pma1ta2ihk.execute-api.us-east-1.amazonaws.com/dev/todos/{todoId}/attachment
 
 # Frontend
 The config.ts needs to be updated accordingly. Here are the values for this application.
@@ -45,9 +45,11 @@ The application should store TODO items, and each TODO item contains the followi
 
 To implement this project, you need to implement the following functions and configure them in the `serverless.yml` file:
 
-* `Auth` - A custom authorizer for API Gateway that validates all other functions.
+### Auth
+A custom authorizer for API Gateway that validates all other functions.
 
-* `GetTodos` - Returns all TODOs for a current user. A user id can be extracted from a JWT token that is sent by the frontend
+### GetTodos
+Returns all TODOs for a current user. A user id can be extracted from a JWT token that is sent by the frontend
 
 The response date format looks like this:
 
@@ -76,7 +78,8 @@ The response date format looks like this:
 }
 ```
 
-* `CreateTodo` - Creates a new TODO for a current user. A shape of data send by a client application to this function can be found in the `CreateTodoRequest.ts` file
+### CreateTodo
+Creates a new TODO for a current user. A shape of data send by a client application to this function can be found in the `CreateTodoRequest.ts` file
 
 It receives a new TODO item to be created in JSON format that looks like this:
 
@@ -103,7 +106,8 @@ The response after creation of new TODO item looks like this:
 }
 ```
 
-* `UpdateTodo` - Updates a TODO item created by a current user. A shape of data send by a client application to this function can be found in the `UpdateTodoRequest.ts` file
+### UpdateTodo 
+Updates a TODO item created by a current user. A shape of data send by a client application to this function can be found in the `UpdateTodoRequest.ts` file
 
 It receives an object that contains three fields that can be updated in a TODO item:
 
@@ -118,11 +122,13 @@ It receives an object that contains three fields that can be updated in a TODO i
 The id of an item that should be updated is passed as a URL parameter.
 
 
-* `DeleteTodo` - Deletes a TODO item created by a current user. Expects an id of a TODO item to remove. It returns an empty response.
+### DeleteTodo 
+Deletes a TODO item created by a current user. Expects an id of a TODO item to remove. It returns an empty response.
 
 
 
-* `GenerateUploadUrl` - returns a pre-signed URL that can be used to upload an attachment file for a TODO item.
+### GenerateUploadUrl 
+Returns a pre-signed URL that can be used to upload an attachment file for a TODO item.
 
 It returns a JSON object that looks like this:
 
