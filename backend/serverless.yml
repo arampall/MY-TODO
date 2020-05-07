@@ -4,7 +4,8 @@ service:
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
-  - serverless-plugin-ts-validation
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   tracing:
@@ -22,6 +23,22 @@ provider:
     TODO_TABLE: todo-${self:provider.stage}
     IMAGES_S3_BUCKET: todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+
+custom:
+  documentation: 
+    api:
+      info:
+        version: v1.0.0
+        title: Todo app
+        description: Simple TODO app for logging tasks
+    models:
+      - name: CreateTodoRequest
+        contentType: application/json
+        schema: ${file(src/models/schemas/create-todo-model.json)}
+      - name: UpdateTodoRequest
+        contentType: application/json
+        schema: ${file(src/models/schemas/update-todo-model.json)}
+
 
 functions:
 
@@ -56,11 +73,12 @@ functions:
       - http:
           method: post
           path: todos
-          request:
-            schema:
-              application/json:
-                tsPath: src/requests/CreateTodoRequest.ts
-                tsInterface: CreateTodoRequest
+          reqValidatorName: RequestBodyValidator
+          documentation: 
+            summary: Create a new todo item 
+            description: Create a new todo item
+            requestModels: 
+              'application/json': CreateTodoRequest
           cors: true
           authorizer: Auth
     iamRoleStatements:
@@ -81,11 +99,12 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
-          request:
-            schema:
-              application/json:
-                tsPath: src/requests/UpdateTodoRequest.ts
-                tsInterface: UpdateTodoRequest
+          reqValidatorName: RequestBodyValidator
+          documentation: 
+            summary: Update an existing todo item 
+            description: Update an item using the Item ID
+            requestModels: 
+              'application/json': UpdateTodoRequest
           cors: true
           authorizer: Auth
     iamRoleStatements:
@@ -210,4 +229,13 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
+
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId: 
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
 
